@@ -1,0 +1,342 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+*{margin:0;padding:0;}
+body {
+	font:13.34px helvetica,arial,freesans,clean,sans-serif;
+	color:black;
+	line-height:1.4em;
+	background-color: #F8F8F8;
+	padding: 0.7em;
+}
+p {
+	margin:1em 0;
+	line-height:1.5em;
+}
+table {
+	font-size:inherit;
+	font:100%;
+	margin:1em;
+}
+table th{border-bottom:1px solid #bbb;padding:.2em 1em;}
+table td{border-bottom:1px solid #ddd;padding:.2em 1em;}
+input[type=text],input[type=password],input[type=image],textarea{font:99% helvetica,arial,freesans,sans-serif;}
+select,option{padding:0 .25em;}
+optgroup{margin-top:.5em;}
+pre,code{font:12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;}
+pre {
+	margin:1em 0;
+	font-size:12px;
+	background-color:#eee;
+	border:1px solid #ddd;
+	padding:5px;
+	line-height:1.5em;
+	color:#444;
+	overflow:auto;
+	-webkit-box-shadow:rgba(0,0,0,0.07) 0 1px 2px inset;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;border-radius:3px;
+}
+pre code {
+	padding:0;
+	font-size:12px;
+	background-color:#eee;
+	border:none;
+}
+code {
+	font-size:12px;
+	background-color:#f8f8ff;
+	color:#444;
+	padding:0 .2em;
+	border:1px solid #dedede;
+}
+img{border:0;max-width:100%;}
+abbr{border-bottom:none;}
+a{color:#4183c4;text-decoration:none;}
+a:hover{text-decoration:underline;}
+a code,a:link code,a:visited code{color:#4183c4;}
+h2,h3{margin:1em 0;}
+h1,h2,h3,h4,h5,h6{border:0;}
+h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em;}
+h1:first-child{margin-top:0;padding-top:.25em;border-top:none;}
+h2{font-size:150%;margin-top:1.5em;border-top:4px solid #e0e0e0;padding-top:.5em;}
+h3{margin-top:1em;}
+hr{border:1px solid #ddd;}
+ul{margin:1em 0 1em 2em;}
+ol{margin:1em 0 1em 2em;}
+ul li,ol li{margin-top:.5em;margin-bottom:.5em;}
+ul ul,ul ol,ol ol,ol ul{margin-top:0;margin-bottom:0;}
+blockquote{margin:1em 0;border-left:5px solid #ddd;padding-left:.6em;color:#555;}
+dt{font-weight:bold;margin-left:1em;}
+dd{margin-left:2em;margin-bottom:1em;}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>To-Do:</title>
+
+</head>
+<body>
+<p>以下内容不包括加载方面的优化，主要关注交互即页面加载显示的性能优化问题</p>
+
+<h5>To-Do:</h5>
+
+<ul>
+<li>工作耗时估计</li>
+</ul>
+
+
+<h5>Common Issues</h5>
+
+<ul>
+<li>remove unused css
+
+<ul>
+<li><p>现有情况</p>
+
+<pre><code>  540 rules (70%) of CSS not used by the current page.
+  detail.css: 83% is not used by the current page.
+  index.css: 36% is not used by the current page.
+  scope.css: 89% is not used by the current page.
+</code></pre></li>
+<li>方案
+
+<ul>
+<li><em>pending</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>减少包的大小</p>
+
+<ul>
+<li>代码压缩
+
+<ul>
+<li>现有情况<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></li>
+<li>方案：
+
+<ul>
+<li>uglify</li>
+</ul>
+</li>
+<li><p>预期达到的效果</p>
+
+<pre><code>  ➜ dist git:(master) ✗ du -sh ipad-webview-test.js
+  376K    ipad-webview-test.js
+  ➜  dist git:(master) ✗ du -sh ipad-webview-test.min.js
+  132K    ipad-webview-test.min.js
+</code></pre></li>
+</ul>
+</li>
+<li> 代码依赖精简
+
+<ul>
+<li>某些行业不需要依赖的库的引入导致的script-block-rendering<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>延时加载</p></li>
+</ul>
+
+
+<h4>组件平台</h4>
+
+<ul>
+<li>景点(pending)</li>
+</ul>
+
+
+<h4>手机客户端</h4>
+
+<ul>
+<li>交互性能优化
+
+<ul>
+<li>click 事件更换为 touch 事件
+
+<ul>
+<li>click 响应缓慢<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>, 建议开发tap事件轻量lib，统一事件调用方式，ele.addEventListener("tap",func);</li>
+</ul>
+</li>
+<li>关于iscroll
+
+<ul>
+<li>高级mobile<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>
+
+<ul>
+<li>可支持 <code>overflow:auto</code>的方式，可以完全不需要用iscroll可以做到区域滚动</li>
+</ul>
+</li>
+<li>低端机器
+
+<ul>
+<li>检测其对该属性的支持程度，fallback至轻量级libs<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>,或者根据业务需要开发相应业务对接组件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3秒后重新加载数据策略
+
+<ul>
+<li>现有情况以及问题<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup></li>
+<li>方案:
+
+<ul>
+<li>对现有的配置表进行</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>过多统计的请求</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>iPad客户端</h4>
+
+<ul>
+<li><p>Native 性能优化</p>
+
+<ul>
+<li>Native性能比较差,导致打开的webview所持有的资源不足以流畅交互,单独的webview iOS app流畅运行place页面
+[Pic]</li>
+<li>关于调整webview高度的策略
+
+<ul>
+<li>现有情况<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup></li>
+<li>方案(参考Google Currents的方案<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>)
+
+<ul>
+<li>与Native的RD进行沟通联调</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>消息传递
+
+<ul>
+<li>现有方案<sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup></li>
+<li>方案(参考Google Currents的方案):
+
+<ul>
+<li>创建一个hidden iframe，通过更改iframe的hash值进行传递</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>初始化UIWebView策略
+
+<ul>
+<li>现有策略<sup id="fnref:10"><a href="#fn:10" rel="footnote">10</a></sup></li>
+<li>在进入ListView部分，进行空模板绑定加载</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Webview 性能优化</p>
+
+<ul>
+<li>POI点图片的加载,现有的方式导致多次渲染问题<sup id="fnref:11"><a href="#fn:11" rel="footnote">11</a></sup>
+
+<ul>
+<li>方案:
+
+<ul>
+<li>根据客户端型号请求size与container等同的图片,指定img的width和height,缺点是设备iPad关联性较大</li>
+<li>请求一张稍大的图片，直接采用css控制size与居中</li>
+<li>尝试采用Responsive设计</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预渲染
+
+<ul>
+<li>现有情况<sup id="fnref:12"><a href="#fn:12" rel="footnote">12</a></sup></li>
+<li>方案
+
+<ul>
+<li>图区(等高)，简介部分的外部框架可提前渲染，后续内容填充其内</li>
+<li>适当调整图区与行业相关的dom位置，可减少一次reflow,repain</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>持续优化Dom树
+
+<ul>
+<li>在前期优化的基础上，对图区，地图显示dom进行优化，减少层级</li>
+</ul>
+</li>
+<li>less cool looking:
+
+<ul>
+<li>现有情况<sup id="fnref:13"><a href="#fn:13" rel="footnote">13</a></sup></li>
+<li>方案
+
+<ul>
+<li>在权衡nice looking 与 performance 的程度上去除高耗rendering属性<sup id="fnref:14"><a href="#fn:14" rel="footnote">14</a></sup></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>character set 的指定，减少decode时间
+
+<ul>
+<li>如在*.html头部添加 <code>&lt;meta http-equiv="content-type" content="text/html; charset=UTF-8;charset=utf-8"&gt;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>仅仅做空格空行等的文本压缩操作<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+<li id="fn:2">
+<p>如iscroll,tangram<a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
+<li id="fn:3">
+<p>click事件在mobile响应模型里面，处于一个在call stack比较低的地方，前面发生了touchstart,touchmove,touchend等事件,就在I9100上观察效果来说，大概需要300ms才会响应click事件，采用touch事件预期在100ms内响应callback<a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
+<li id="fn:4">
+<p>gt Android 3.0 gt IOS4 ,detail<a href="#fnref:4" rev="footnote">&#8617;</a></p></li>
+<li id="fn:5">
+<p>Overthrow,github搜索即可<a href="#fnref:5" rev="footnote">&#8617;</a></p></li>
+<li id="fn:6">
+<p>本身目的为了用户能更加快速看到信息，实际上在操作过程中会出现闪屏（ios平台,android平台因其webview策略不一，不会引起闪屏），重新渲染你也使得webview卡顿<a href="#fnref:6" rev="footnote">&#8617;</a></p></li>
+<li id="fn:7">
+<p>每次渲染一个模块的时候，必须向native发送消息，多次让[UIWeview setFrame]<a href="#fnref:7" rev="footnote">&#8617;</a></p></li>
+<li id="fn:8">
+<p><a href="http://www.cocoanetics.com/2012/05/podcast-36-google-currents/">Podcast #36 – “Google Currents”</a><a href="#fnref:8" rev="footnote">&#8617;</a></p></li>
+<li id="fn:9">
+<p>直接通过<em>window.location.href=command</em>，在OC里面捕获该URL Redirection<a href="#fnref:9" rev="footnote">&#8617;</a></p></li>
+<li id="fn:10">
+<p>第一次点击进入详情页的时候，首次渲染导致的体验已经速度不友好，退出详情页的时候，UIWebview保持当前内容，下次进入另外的POI点之时，重新导入已经绑定数据，没有对整个页面进行重新的渲染<a href="#fnref:10" rev="footnote">&#8617;</a></p></li>
+<li id="fn:11">
+<p>图片首次显示渲染，resize之后的渲染，外加javascript对图片size的计算时间<a href="#fnref:11" rev="footnote">&#8617;</a></p></li>
+<li id="fn:12">
+<p>数据返回后html生成后一同跟数据显示<a href="#fnref:12" rev="footnote">&#8617;</a></p></li>
+<li id="fn:13">
+<p>iPad应用高级消耗css属性比较多<a href="#fnref:13" rev="footnote">&#8617;</a></p></li>
+<li id="fn:14">
+<p>如box-shadow,border-radius<a href="#fnref:14" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+</body>
+</html>
