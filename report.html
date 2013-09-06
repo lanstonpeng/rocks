@@ -90,9 +90,7 @@ dd{margin-left:2em;margin-bottom:1em;}
 <body>
 <p>以下内容不包括加载方面的优化，主要关注交互即页面加载显示的性能优化问题</p>
 
-<p><strong>build</strong>
-    - 0.1
-    - 2013.9.6</p>
+<p><strong>build</strong>:0.1.1 - 2013.9.6</p>
 
 <h3>To-Do:</h3>
 
@@ -136,7 +134,7 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>uglify</li>
 </ul>
 </li>
-<li><p>预期达到的效果</p>
+<li><p>预期达到的效果(by grunt uglify)</p>
 
 <pre><code>  ➜ dist git:(master) ✗ du -sh ipad-webview-test.js
   376K    ipad-webview-test.js
@@ -153,7 +151,19 @@ dd{margin-left:2em;margin-bottom:1em;}
 </li>
 </ul>
 </li>
-<li><p>延时加载</p>
+<li><p>大量的parseHTML</p>
+
+<ul>
+<li>现有情况<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></li>
+<li>方案
+
+<ul>
+<li><em>pending</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>延时加载
 
 <ul>
 <li><em>pending</em></li>
@@ -171,13 +181,13 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>click 事件更换为 touch 事件
 
 <ul>
-<li>click 响应缓慢<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>, 建议开发tap事件轻量lib，统一事件调用方式，ele.addEventListener("tap",func);</li>
+<li>click 响应缓慢<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>, 建议开发tap事件轻量lib，统一事件调用方式，ele.addEventListener("tap",func);</li>
 </ul>
 </li>
 <li>关于iscroll
 
 <ul>
-<li>高级mobile<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>
+<li>高级mobile<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>
 
 <ul>
 <li>可支持 <code>overflow:auto</code>的方式，可以完全不需要用iscroll可以做到区域滚动</li>
@@ -186,7 +196,8 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>低端机器
 
 <ul>
-<li>检测其对该属性的支持程度，fallback至轻量级libs<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>,或者根据业务需要开发相应业务对接组件</li>
+<li>检测其对该属性的支持程度，fallback至轻量级libs<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup>,或者根据业务需要开发相应业务对接组件
+<!-- - [OT]对现在使用iscorll的逻辑持有相反意见--></li>
 </ul>
 </li>
 </ul>
@@ -194,7 +205,7 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>3秒后重新加载数据策略
 
 <ul>
-<li>现有情况以及问题<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup></li>
+<li>现有情况以及问题<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup></li>
 <li>方案:
 
 <ul>
@@ -220,15 +231,15 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li><p>Native 性能优化</p>
 
 <ul>
-<li>Native性能比较差,导致打开的webview所持有的资源不足以流畅交互,单独的webview iOS app流畅运行place页面</li>
+<li>Native性能比较差<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>,初步<strong>猜测</strong>其导致打开的webview所持资源不足以流畅交互,单独的webview iOS app流畅运行place页面</li>
 <li>关于调整webview高度的策略
 
 <ul>
-<li>现有情况<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup></li>
-<li>方案(参考Google Currents的方案<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>)
+<li>现有情况<sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup></li>
+<li>方案(参考Google Currents的方案<sup id="fnref:10"><a href="#fn:10" rel="footnote">10</a></sup>)
 
 <ul>
-<li>与Native的RD进行沟通联调</li>
+<li>与Native的RD进行沟通联调,<em>pending</em></li>
 </ul>
 </li>
 </ul>
@@ -236,7 +247,7 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>消息传递
 
 <ul>
-<li>现有方案<sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup></li>
+<li>现有方案<sup id="fnref:11"><a href="#fn:11" rel="footnote">11</a></sup></li>
 <li>方案(参考Google Currents的方案):
 
 <ul>
@@ -248,7 +259,7 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>初始化UIWebView策略
 
 <ul>
-<li>现有策略<sup id="fnref:10"><a href="#fn:10" rel="footnote">10</a></sup></li>
+<li>现有策略<sup id="fnref:12"><a href="#fn:12" rel="footnote">12</a></sup></li>
 <li>方案
 
 <ul>
@@ -262,7 +273,7 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li><p>Webview 性能优化</p>
 
 <ul>
-<li>POI点图片的加载,现有的方式导致多次渲染问题<sup id="fnref:11"><a href="#fn:11" rel="footnote">11</a></sup>
+<li>POI点图片的加载,现有的方式导致多次渲染问题<sup id="fnref:13"><a href="#fn:13" rel="footnote">13</a></sup>
 
 <ul>
 <li>方案:
@@ -278,7 +289,7 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>预渲染
 
 <ul>
-<li>现有情况<sup id="fnref:12"><a href="#fn:12" rel="footnote">12</a></sup></li>
+<li>现有情况<sup id="fnref:14"><a href="#fn:14" rel="footnote">14</a></sup></li>
 <li>方案
 
 <ul>
@@ -297,11 +308,11 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li>less cool looking:
 
 <ul>
-<li>现有情况<sup id="fnref:13"><a href="#fn:13" rel="footnote">13</a></sup></li>
+<li>现有情况<sup id="fnref:15"><a href="#fn:15" rel="footnote">15</a></sup></li>
 <li>方案
 
 <ul>
-<li>在权衡nice looking 与 performance 的程度上去除高耗rendering属性<sup id="fnref:14"><a href="#fn:14" rel="footnote">14</a></sup></li>
+<li>在权衡nice looking 与 performance 的程度上去除高耗rendering属性<sup id="fnref:16"><a href="#fn:16" rel="footnote">16</a></sup></li>
 </ul>
 </li>
 </ul>
@@ -336,29 +347,33 @@ dd{margin-left:2em;margin-bottom:1em;}
 <li id="fn:2">
 <p>如iscroll,tangram<a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
 <li id="fn:3">
-<p>click事件在mobile响应模型里面，处于一个在call stack比较低的地方，前面发生了touchstart,touchmove,touchend等事件,就在I9100上观察效果来说，大概需要300ms才会响应click事件，采用touch事件预期在100ms内响应callback<a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
+<p><a href="https://www.dropbox.com/s/hl1f4tyrvgxdz5q/c9d28943136509af75a7f5ea9ad110e5.jpeg">这里</a>和<a href="https://www.dropbox.com/s/sqrodasfuwwtbdz/e70f6dc2f69359fcf5ab2e8d2fb36148.jpeg">这里</a><a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
 <li id="fn:4">
-<p>gt Android 3.0 gt IOS4 ,detail<a href="#fnref:4" rev="footnote">&#8617;</a></p></li>
+<p>click事件在mobile响应模型里面，处于一个在call stack比较低的地方，前面发生了touchstart,touchmove,touchend等事件,就在I9100上观察效果来说，大概需要300ms才会响应click事件，采用touch事件预期在100ms内响应callback<a href="#fnref:4" rev="footnote">&#8617;</a></p></li>
 <li id="fn:5">
-<p>Overthrow,github搜索即可<a href="#fnref:5" rev="footnote">&#8617;</a></p></li>
+<p>gt Android 3.0 gt IOS4 ,detail<a href="#fnref:5" rev="footnote">&#8617;</a></p></li>
 <li id="fn:6">
-<p>本身目的为了用户能更加快速看到信息，实际上在操作过程中会出现闪屏（ios平台,android平台因其webview策略不一，不会引起闪屏），重新渲染你也使得webview卡顿<a href="#fnref:6" rev="footnote">&#8617;</a></p></li>
+<p>Overthrow,github搜索即可<a href="#fnref:6" rev="footnote">&#8617;</a></p></li>
 <li id="fn:7">
-<p>每次渲染一个模块的时候，必须向native发送消息，多次让[UIWeview setFrame]<a href="#fnref:7" rev="footnote">&#8617;</a></p></li>
+<p>本身目的为了用户能更加快速看到信息，实际上在操作过程中会出现闪屏（ios平台,android平台因其webview策略不一，不会引起闪屏），重新渲染你也使得webview卡顿<a href="#fnref:7" rev="footnote">&#8617;</a></p></li>
 <li id="fn:8">
-<p><a href="http://www.cocoanetics.com/2012/05/podcast-36-google-currents/">Podcast #36 – “Google Currents”</a><a href="#fnref:8" rev="footnote">&#8617;</a></p></li>
+<p><a href="https://www.dropbox.com/s/5imsp470x4nqdba/7f4d4f8f9541948a89b69d8b6dd2cbd1.jpeg">Instrument记录打开webview后的情况,注意到有内存泄漏</a><a href="#fnref:8" rev="footnote">&#8617;</a></p></li>
 <li id="fn:9">
-<p>直接通过<em>window.location.href=command</em>，在OC里面捕获该URL Redirection<a href="#fnref:9" rev="footnote">&#8617;</a></p></li>
+<p>每次渲染一个模块的时候，必须向native发送消息，多次让[UIWeview setFrame]<a href="#fnref:9" rev="footnote">&#8617;</a></p></li>
 <li id="fn:10">
-<p>第一次点击进入详情页的时候，首次渲染导致的体验已经速度不友好，退出详情页的时候，UIWebview保持当前内容，下次进入另外的POI点之时，重新导入已经绑定数据，没有对整个页面进行重新的渲染<a href="#fnref:10" rev="footnote">&#8617;</a></p></li>
+<p><a href="http://www.cocoanetics.com/2012/05/podcast-36-google-currents/">Podcast #36 – “Google Currents”</a><a href="#fnref:10" rev="footnote">&#8617;</a></p></li>
 <li id="fn:11">
-<p>图片首次显示渲染，resize之后的渲染，外加javascript对图片size的计算时间<a href="#fnref:11" rev="footnote">&#8617;</a></p></li>
+<p>直接通过<em>window.location.href=command</em>，在OC里面捕获该URL Redirection<a href="#fnref:11" rev="footnote">&#8617;</a></p></li>
 <li id="fn:12">
-<p>数据返回后html生成后一同跟数据显示<a href="#fnref:12" rev="footnote">&#8617;</a></p></li>
+<p>第一次点击进入详情页的时候，首次渲染导致的体验已经速度不友好，退出详情页的时候，UIWebview保持当前内容，下次进入另外的POI点之时，重新导入已经绑定数据，没有对整个页面进行重新的渲染<a href="#fnref:12" rev="footnote">&#8617;</a></p></li>
 <li id="fn:13">
-<p>iPad应用高级消耗css属性比较多<a href="#fnref:13" rev="footnote">&#8617;</a></p></li>
+<p>图片首次显示渲染，resize之后的渲染，外加javascript对图片size的计算时间<a href="#fnref:13" rev="footnote">&#8617;</a></p></li>
 <li id="fn:14">
-<p>如box-shadow,border-radius<a href="#fnref:14" rev="footnote">&#8617;</a></p></li>
+<p>数据返回后html生成后一同跟数据显示<a href="#fnref:14" rev="footnote">&#8617;</a></p></li>
+<li id="fn:15">
+<p>iPad应用高级消耗css属性比较多<a href="#fnref:15" rev="footnote">&#8617;</a></p></li>
+<li id="fn:16">
+<p>如box-shadow,border-radius<a href="#fnref:16" rev="footnote">&#8617;</a></p></li>
 </ol>
 </div>
 
