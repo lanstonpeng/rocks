@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width"/>
+  <title></title>
+</head>
+<script type="text/javascript" src="./bower_components/jquery/jquery.min.js"></script>
+<body>
+  <button onclick="take_a_shot()" style="height:300px;width:100%">Again</button>
+  <div id="msg" style="position:fixed;top:100px;left:10px;font-size:24px;background:orange;">loading...</div>
+  <div id="msg1" style="font-size:20px"></div> 
+  <div id="msg2" style="font-size:20px"></div> 
+  <div id="statistics" style="position:fixed;right:10px;top:100px;background:grey">
+      <div id="o"></div> 
+      <div id="r"></div>
+  </div>
+  <script type="text/javascript">
+    var original = "http://www.json-generator.com/j/hMti?indent=4&r=";
+
+    var new_data = "http://www.json-generator.com/j/hPKj?indent=4&r=";
+
+    var msg = document.getElementById("msg"), 
+        msg1 = document.getElementById("msg1"),
+        msg2 = document.getElementById("msg2"),
+        o  = document.getElementById("o"),
+        r  = document.getElementById("r"),
+        o_result = [],
+        r_result = [];
+
+    function generate_url(url){
+      return url + Math.random();
+    } 
+
+    function take_a_shot(){
+      msg.style.display = "block";
+      var start = new Date();
+      $.getJSON(generate_url(original),function(data){
+          var origin_time = new Date() - start;
+          msg1.innerHTML="origin_time " + origin_time +"<br/>"; 
+          o_result.push(origin_time);
+          o.innerHTML = "origin_time average: " + o_result.reduce(function(prev,current){ return prev+current}) / o_result.length;
+
+              //start the new request for no blocking 
+                var another_start = new Date();
+                $.getJSON(generate_url(new_data),function(data){
+                  var new_time = new Date() - another_start;
+                  msg2.innerHTML = "new time  "+ new_time +"<br/>";
+                  r_result.push(new_time);
+                  r.innerHTML = "new_time average: " + r_result.reduce(function(prev,current){ return prev+current}) / r_result.length;
+                  msg.style.display = "none";
+                  }
+                );
+          })
+    }
+      
+    
+    take_a_shot();
+  </script>
+</body>
+</html>
