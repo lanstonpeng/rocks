@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>
-    基线Client 
+    数据裁剪接口
   </title>
 </head>
 <body>
+  <!-->
+  <pre>
+  基线Client 
   uid:35debf299ac5515da6da3931
+  </pre>
   <br/>
   <a href="http://client.map.baidu.com/detail?t=1379467931237&qt=ninf&uid=35debf299ac5515da6da3931&from=webview&os=map_android_app&callback=__callback__getAndCheckData_35debf299ac5515da6da3931_0&t=1379467931237">
     没有作裁剪的JSON
@@ -16,6 +20,7 @@
   <a href="http://49.212.150.224:5000/?t=1379467931237&qt=ninf&uid=35debf299ac5515da6da3931&from=webview&os=map_android_app&callback=__callback__getAndCheckData_35debf299ac5515da6da3931_0&t=1379467931237">
     裁剪后的JSON
   </a>
+  -->
   <pre>
   
     - 去除content.ext.detail_info.groupon
@@ -24,6 +29,10 @@
     - 去除content.ext.review
       - 保留第一条(保持数组结构)
     - 去除content.ext.image
+  </pre>
+
+  <pre>
+  请保持原有接口不变，数据裁剪针对iPad优化较小，成本比较大，故在本期忽略iPad
   </pre>
   <div>
     build: 9.22
