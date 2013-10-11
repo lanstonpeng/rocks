@@ -1,0 +1,560 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #fff;
+    background-color: #282a36;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+a {
+    color: #59acf3;
+}
+a:hover {
+    color: #a7d8ff;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #fff;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+	color: #ff4a14;
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #bf370f;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #282a36;
+    color: #ff4a14;
+    font-size: 11px;
+    padding: 0;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>关于iPad性能优化的总结(TL;DR)</title>
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<p><strong>build</strong>:0.2.1 - 2013.10.10</p>
+
+<h2>关于iPad性能优化的总结(TL;DR)</h2>
+
+<ul>
+<li>虽然在webview层面上 以及 native与webview的交互上(如通信方式，首次加载的方案)有比较 <strong>多(不是大)</strong> 的提升地方，但实际上，在这个层面上的投入仅仅能优化可能不到20%(乐观估计)</li>
+<li>FE 这边能推动的性价比最高的两个地方是 <em>数据裁剪</em> 与 <em>点击事件改进</em></li>
+<li>根本解决方案
+
+<ul>
+<li>1）推动native进行性能优化</li>
+<li>2）自身研读native代码(需要较多的时间)，修改代码拿出demo再推动</li>
+<li>3）.*</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h3>iPad Client</h3>
+
+<ul>
+<li>现有性能情况
+
+<ul>
+<li>加载以及滚动
+
+<ul>
+<li>首屏显示情况
+
+<ul>
+<li>数据拉取时常占70%，具体数据采集如下表(POI点涵盖几个热门类别的POI点,iPad3,IOS5.1)</li>
+<li>针对数据裁剪可以较为高性价比的取得首页加载速度</li>
+<li>(*)代表该POI点为首屏进入</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th align="left">请求时长(ms) </th>
+<th align="center"> 页面内容展现时长(ms) </th>
+<th align="right"> 数据绑定代码运行时长(ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">(*)2413         </td>
+<td align="center"> 4304          </td>
+<td align="right"> 1891</td>
+</tr>
+<tr>
+<td align="left">1359         </td>
+<td align="center"> 2731         </td>
+<td align="right"> 1372</td>
+</tr>
+<tr>
+<td align="left">668 </td>
+<td align="center"> 1162 </td>
+<td align="right"> 494</td>
+</tr>
+<tr>
+<td align="left">737 </td>
+<td align="center"> 1072  </td>
+<td align="right"> 335</td>
+</tr>
+<tr>
+<td align="left">(*)1796 </td>
+<td align="center"> 2197  </td>
+<td align="right"> 401</td>
+</tr>
+<tr>
+<td align="left">833 </td>
+<td align="center"> 1137  </td>
+<td align="right"> 303</td>
+</tr>
+<tr>
+<td align="left">1498 </td>
+<td align="center"> 2458  </td>
+<td align="right"> 960</td>
+</tr>
+<tr>
+<td align="left">799 </td>
+<td align="center"> 1194  </td>
+<td align="right"> 395</td>
+</tr>
+<tr>
+<td align="left">720 </td>
+<td align="center"> 1078  </td>
+<td align="right"> 358</td>
+</tr>
+<tr>
+<td align="left">1487 </td>
+<td align="center"> 2807  </td>
+<td align="right"> 1320</td>
+</tr>
+<tr>
+<td align="left">1062 </td>
+<td align="center"> 1985  </td>
+<td align="right"> 923</td>
+</tr>
+<tr>
+<td align="left">(*)1667 </td>
+<td align="center"> 2007  </td>
+<td align="right"> 340</td>
+</tr>
+<tr>
+<td align="left">1410 </td>
+<td align="center"> 2410  </td>
+<td align="right"> 1000</td>
+</tr>
+<tr>
+<td align="left">760 </td>
+<td align="center"> 1051  </td>
+<td align="right"> 291</td>
+</tr>
+<tr>
+<td align="left">755 </td>
+<td align="center"> 1062  </td>
+<td align="right"> 307</td>
+</tr>
+<tr>
+<td align="left">780 </td>
+<td align="center"> 1066  </td>
+<td align="right"> 346</td>
+</tr>
+<tr>
+<td align="left"><strong>~70%</strong> </td>
+<td align="center"> --   </td>
+<td align="right">  <strong>~30%</strong></td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>交互响应速度
+
+<ul>
+<li>在低端机器上(&lt;=iPad2,IOS5/6),性能有着较为大的问题</li>
+<li>在>=iPad3(IOS5/6)上，流程度属于基本可接受，滚动帧数为～23fps以上</li>
+<li>Webview本身的事件代码构建问题导致的交互响应速度缓慢，主要原因是Common Issues里面提及的click事件<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<ul>
+<li>Native 性能优化(因为没有对项目的代码有深入的了解，仅仅从业界以及结合FE这边的情况进行猜想与方案构建，而根据之前的试验，即便是<em>纯html的简单列表</em>的滚动也是比较卡顿)
+
+<ul>
+<li>Native性能比较差<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>,初步 <strong>猜测</strong> 其导致打开的webview所持资源不足以流畅交互,单独的webview iOS app流畅运行place页面</li>
+<li>关于调整webview高度的策略
+
+<ul>
+<li>现有情况<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></li>
+<li>方案(参考Google Currents的方案<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>)
+
+<ul>
+<li>与Native的RD进行沟通联调,<em>pending</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>消息传递
+
+<ul>
+<li>现有方案<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup></li>
+<li>方案(参考Google Currents的方案):
+
+<ul>
+<li>创建一个hidden iframe，通过更改iframe的hash值进行传递</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>初始化UIWebView策略
+
+<ul>
+<li>现有策略<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup></li>
+<li>方案
+
+<ul>
+<li>在进入ListView部分，进行空模板绑定加载</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<ul>
+<li>Webview 性能优化
+
+<ul>
+<li>POI点图片的加载,现有的方式导致多次渲染问题<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup>
+
+<ul>
+<li>方案:
+
+<ul>
+<li>根据客户端型号请求size与container等同的图片,指定img的width和height,缺点是设备iPad关联性较大</li>
+<li>请求一张稍大的图片，直接采用css控制size与居中</li>
+<li>尝试Responsive设计</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预渲染
+
+<ul>
+<li>现有情况<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup></li>
+<li>方案
+
+<ul>
+<li>图区(等高)，简介部分的外部框架可提前渲染，后续内容填充其内</li>
+<li>适当调整图区与行业相关的dom位置，可减少一次reflow,repain</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>持续优化Dom树
+
+<ul>
+<li>在前期优化的基础上，对图区，地图显示dom进行优化，减少层级</li>
+</ul>
+</li>
+<li>less cool looking:
+
+<ul>
+<li>现有情况<sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup></li>
+<li>方案
+
+<ul>
+<li>在权衡nice looking 与 performance 的程度上去除高耗rendering属性<sup id="fnref:10"><a href="#fn:10" rel="footnote">10</a></sup></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>character set 的指定，减少decode时间
+
+<ul>
+<li>如在*.html头部添加 <code>&lt;meta http-equiv="content-type" content="text/html; charset=UTF-8;charset=utf-8"&gt;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h3>Common Issues</h3>
+
+<ul>
+<li>Remove unused css
+
+<ul>
+<li><p>现有情况</p>
+
+<pre><code>  540 rules (70%) of CSS not used by the current page.
+  detail.css: 83% is not used by the current page.
+  index.css: 36% is not used by the current page.
+  scope.css: 89% is not used by the current page.
+</code></pre></li>
+<li>方案
+
+<ul>
+<li>半自动剔除(历史遗留问题导致修改成本较大)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>包的大小</p>
+
+<ul>
+<li>代码压缩
+
+<ul>
+<li>现有情况<sup id="fnref:11"><a href="#fn:11" rel="footnote">11</a></sup></li>
+<li>方案：
+
+<ul>
+<li>uglify</li>
+</ul>
+</li>
+<li><p>预期达到的效果(by grunt uglify)</p>
+
+<pre><code>  ➜ dist git:(master) ✗ du -sh ipad-webview-test.js
+  376K    ipad-webview-test.js
+  ➜  dist git:(master) ✗ du -sh ipad-webview-test.min.js
+  132K    ipad-webview-test.min.js
+</code></pre></li>
+</ul>
+</li>
+<li> 代码依赖精简
+
+<ul>
+<li>某些行业不需要依赖的库的引入导致的script-block-rendering<sup id="fnref:12"><a href="#fn:12" rel="footnote">12</a></sup></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>大量的parseHTML导致的渲染性能低下</p>
+
+<ul>
+<li>现有情况<sup id="fnref:13"><a href="#fn:13" rel="footnote">13</a></sup>
+
+<ul>
+<li>同样的情况出现在现有的组件平台</li>
+</ul>
+</li>
+<li>方案
+
+<ul>
+<li>建立一个由外层容器负责渲染的机制</li>
+<li>旧有的Place详情页
+
+<ul>
+<li>历史遗留问题导致修改成本巨大</li>
+</ul>
+</li>
+<li>组件平台
+
+<ul>
+<li>在导入模板引擎后可进行该项工作(10.18号后)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预期达到的效果
+
+<ul>
+<li>就机型、IOS版本、详情页性质可以提升100ms</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>click 事件更换为 touch 事件
+
+<ul>
+<li>click 响应缓慢<sup id="fnref:14"><a href="#fn:14" rel="footnote">14</a></sup>, 建议开发tap事件轻量lib，统一事件调用方式，ele.addEventListener("tap",func);</li>
+<li>预期达到的效果
+
+<ul>
+<li>每次关于手指点击的交互的提升能符合$${ t- 300ms \over t} $$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>延时加载
+
+<ul>
+<li><em>pending</em></li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<p><a href="http://lanstonpeng.github.io/rocks/report.html">Old DOCS</a></p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>该方式的转变是所有修改中性价比最高的方式，预计投入2天能完成,收获的交互速度能有较大的提升<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+<li id="fn:2">
+<p><a href="https://www.dropbox.com/s/5imsp470x4nqdba/7f4d4f8f9541948a89b69d8b6dd2cbd1.jpeg">Instrument记录打开webview后的情况,注意到有内存泄漏</a><a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
+<li id="fn:3">
+<p>每次渲染一个模块的时候，必须向native发送消息，多次让[UIWeview setFrame]<a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
+<li id="fn:4">
+<p><a href="http://www.cocoanetics.com/2012/05/podcast-36-google-currents/">Podcast #36 – “Google Currents”</a><a href="#fnref:4" rev="footnote">&#8617;</a></p></li>
+<li id="fn:5">
+<p>直接通过<em>window.location.href=command</em>，在OC里面捕获该URL Redirection<a href="#fnref:5" rev="footnote">&#8617;</a></p></li>
+<li id="fn:6">
+<p>第一次点击进入详情页的时候，首次渲染导致的体验已经速度不友好，退出详情页的时候，UIWebview保持当前内容，下次进入另外的POI点之时，重新导入已经绑定数据，没有对整个页面进行重新的渲染<a href="#fnref:6" rev="footnote">&#8617;</a></p></li>
+<li id="fn:7">
+<p>图片首次显示渲染，resize之后的渲染，外加javascript对图片size的计算时间<a href="#fnref:7" rev="footnote">&#8617;</a></p></li>
+<li id="fn:8">
+<p>数据返回后html生成后一同跟数据显示<a href="#fnref:8" rev="footnote">&#8617;</a></p></li>
+<li id="fn:9">
+<p>iPad应用高级消耗css属性比较多<a href="#fnref:9" rev="footnote">&#8617;</a></p></li>
+<li id="fn:10">
+<p>如box-shadow,border-radius<a href="#fnref:10" rev="footnote">&#8617;</a></p></li>
+<li id="fn:11">
+<p>仅仅做空格空行等的文本压缩操作<a href="#fnref:11" rev="footnote">&#8617;</a></p></li>
+<li id="fn:12">
+<p>如iscroll,tangram<a href="#fnref:12" rev="footnote">&#8617;</a></p></li>
+<li id="fn:13">
+<p><a href="https://www.dropbox.com/s/hl1f4tyrvgxdz5q/c9d28943136509af75a7f5ea9ad110e5.jpeg">这里</a>和<a href="https://www.dropbox.com/s/sqrodasfuwwtbdz/e70f6dc2f69359fcf5ab2e8d2fb36148.jpeg">这里</a><a href="#fnref:13" rev="footnote">&#8617;</a></p></li>
+<li id="fn:14">
+<p>click事件在mobile响应模型里面，处于一个在call stack比较低的地方，前面发生了touchstart,touchmove,touchend等事件，浏览器大概需要300ms才会响应click事件(用以检测是否存着double click事件)，采用touch事件预期在100ms内响应callback<a href="#fnref:14" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+</body>
+</html>
