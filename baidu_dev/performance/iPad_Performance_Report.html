@@ -148,7 +148,7 @@ pre code {
 <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </head>
 <body>
-<p><strong>build</strong>:0.2.1 - 2013.10.22</p>
+<p><strong>build</strong>:0.3.2 - 2013.10.22</p>
 
 <h1>Performance Report of Baidu iPad Client</h1>
 
@@ -382,7 +382,68 @@ pre code {
 <li><h4>Webview 性能优化</h4>
 
 <ul>
-<li>POI点图片的加载,现有的方式导致多次渲染问题<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup>
+<li>预渲染
+
+<ul>
+<li>现有情况<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup></li>
+<li>方案
+
+<ul>
+<li>图区(等高)，简介部分的外部框架可提前渲染，后续内容填充其内</li>
+<li>适当调整图区与行业相关的dom位置，可减少一次reflow,repain</li>
+</ul>
+</li>
+<li><strong>预期收益</strong>
+
+<ul>
+<li>提高首次加载模板的速度的~30%</li>
+</ul>
+</li>
+<li>Cons
+
+<ul>
+<li>客户端需要相应的支持，沟通成本上升</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>持续优化Dom树
+
+<ul>
+<li>方案
+
+<ul>
+<li>在前期优化的基础上，对图区，地图显示dom进行优化，减少层级</li>
+</ul>
+</li>
+<li><strong>预期收益</strong>
+
+<ul>
+<li>根据不同行业页面交互的复杂程度有不同程度的提升，如复杂的酒店部分在native成功优化的基础上能提升~15%的交互响应/滚动速度</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>less cool looking:
+
+<ul>
+<li>现有情况<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup></li>
+<li>方案
+
+<ul>
+<li>在权衡nice looking 与 performance 的程度上去除高耗rendering属性<sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>character set 的指定，减少decode时间
+
+<ul>
+<li>如在*.html头部添加 <code>&lt;meta http-equiv="content-type" content="text/html; charset=UTF-8;charset=utf-8"&gt;</code></li>
+<li>预期收益数值有待策略(pending)</li>
+</ul>
+</li>
+<li>POI点图片的加载,现有的方式导致多次渲染问题<sup id="fnref:10"><a href="#fn:10" rel="footnote">10</a></sup>
 
 <ul>
 <li>方案:
@@ -393,43 +454,12 @@ pre code {
 <li>尝试Responsive设计</li>
 </ul>
 </li>
-</ul>
-</li>
-<li>预渲染
+<li><strong>收益</strong>
 
 <ul>
-<li>现有情况<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup></li>
-<li>方案
-
-<ul>
-<li>图区(等高)，简介部分的外部框架可提前渲染，后续内容填充其内</li>
-<li>适当调整图区与行业相关的dom位置，可减少一次reflow,repain</li>
+<li>去除页面加载后图片闪动问题</li>
 </ul>
 </li>
-</ul>
-</li>
-<li>持续优化Dom树
-
-<ul>
-<li>在前期优化的基础上，对图区，地图显示dom进行优化，减少层级</li>
-</ul>
-</li>
-<li>less cool looking:
-
-<ul>
-<li>现有情况<sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup></li>
-<li>方案
-
-<ul>
-<li>在权衡nice looking 与 performance 的程度上去除高耗rendering属性<sup id="fnref:10"><a href="#fn:10" rel="footnote">10</a></sup></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>character set 的指定，减少decode时间
-
-<ul>
-<li>如在*.html头部添加 <code>&lt;meta http-equiv="content-type" content="text/html; charset=UTF-8;charset=utf-8"&gt;</code></li>
 </ul>
 </li>
 </ul>
@@ -453,6 +483,13 @@ pre code {
 <li>半自动剔除(历史遗留问题导致修改成本较大)</li>
 </ul>
 </li>
+<li><strong>预期收益</strong>
+
+<ul>
+<li>根据不同机型的webview有不同程度的提升，提升页面渲染速度~10%</li>
+<li>place包的大小相应的css文件大小平均减少30%</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p>包的大小</p>
@@ -468,7 +505,7 @@ pre code {
 <li>uglify</li>
 </ul>
 </li>
-<li><p>预期达到的效果(by grunt uglify)</p>
+<li><p><strong>预期达到的效果(by grunt uglify)</strong></p>
 
 <pre><code>  ➜ dist git:(master) ✗ du -sh ipad-webview-test.js
   376K    ipad-webview-test.js
@@ -512,10 +549,10 @@ pre code {
 </li>
 </ul>
 </li>
-<li>预期达到的效果
+<li><strong>预期达到的效果</strong>
 
 <ul>
-<li>就机型、IOS版本、详情页性质可以提升100ms</li>
+<li>根据不同机型提升效果不同，预计能提升~100ms</li>
 </ul>
 </li>
 </ul>
@@ -524,10 +561,10 @@ pre code {
 
 <ul>
 <li>click 响应缓慢<sup id="fnref:14"><a href="#fn:14" rel="footnote">14</a></sup>, 建议开发tap事件轻量lib，统一事件调用方式，ele.addEventListener("tap",func);</li>
-<li>预期达到的效果
+<li><strong>预期达到的效果</strong>
 
 <ul>
-<li>每次关于手指点击的交互的提升能符合$${ t- 300ms \over t} $$</li>
+<li>每次关于手指点击的交互的提升能符合$${ t- 300ms \over t} $$ <strong>交互相应速度提升效果显著</strong></li>
 </ul>
 </li>
 </ul>
@@ -535,7 +572,7 @@ pre code {
 <li>延时加载
 
 <ul>
-<li><em>pending</em></li>
+<li><em>pending</em>（非首屏页面部分图片较少,收益不明显,故定位pending）</li>
 </ul>
 </li>
 </ul>
@@ -564,13 +601,13 @@ pre code {
 <li id="fn:6">
 <p>第一次点击进入详情页的时候，首次渲染导致的体验已经速度不友好，退出详情页的时候，UIWebview保持当前内容，下次进入另外的POI点之时，重新导入已经绑定数据，没有对整个页面进行重新的渲染<a href="#fnref:6" rev="footnote">&#8617;</a></p></li>
 <li id="fn:7">
-<p>图片首次显示渲染，resize之后的渲染，外加javascript对图片size的计算时间<a href="#fnref:7" rev="footnote">&#8617;</a></p></li>
+<p>数据返回后html生成后一同跟数据显示<a href="#fnref:7" rev="footnote">&#8617;</a></p></li>
 <li id="fn:8">
-<p>数据返回后html生成后一同跟数据显示<a href="#fnref:8" rev="footnote">&#8617;</a></p></li>
+<p>iPad应用高级消耗css属性比较多<a href="#fnref:8" rev="footnote">&#8617;</a></p></li>
 <li id="fn:9">
-<p>iPad应用高级消耗css属性比较多<a href="#fnref:9" rev="footnote">&#8617;</a></p></li>
+<p>如box-shadow,border-radius<a href="#fnref:9" rev="footnote">&#8617;</a></p></li>
 <li id="fn:10">
-<p>如box-shadow,border-radius<a href="#fnref:10" rev="footnote">&#8617;</a></p></li>
+<p>图片首次显示渲染，resize之后的渲染，外加javascript对图片size的计算时间<a href="#fnref:10" rev="footnote">&#8617;</a></p></li>
 <li id="fn:11">
 <p>仅仅做空格空行等的文本压缩操作<a href="#fnref:11" rev="footnote">&#8617;</a></p></li>
 <li id="fn:12">
