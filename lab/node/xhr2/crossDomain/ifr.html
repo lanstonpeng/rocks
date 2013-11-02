@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+  <iframe src="proxy.html" frameborder="0" id="ifr"></iframe>
+  <script type="text/javascript">
+    var ifr = document.getElementById("ifr");
+     function sendData(){
+          ifr.src= "file:///Users/lanstonpeng/Desktop/rocks/lab/node/xhr2/crossDomain/proxy.html?data=ww"; 
+     }
+sendData();
+  </script>
+</body>
+</html>

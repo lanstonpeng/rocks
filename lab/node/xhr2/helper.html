@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <script type="text/javascript">
+    parent.postMessage("youtube","*");
+    window.addEventListener("message",function(e){
+        debugger;
+        console.log(e.data);
+        },false);
+  </script>
+</body>
+</html>

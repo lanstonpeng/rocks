@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<body>
+
+  <iframe id="sucker" src="http://localhost:3000/?t=1382591240628&qt=ninf&from=webview&uid=7aea43b7204d94e17c29bd34&os=map_mac_app" frameborder="0"></iframe>
+  <script type="text/javascript">
+    function yep(data){
+      console.log("oh yeah" + data);
+    }
+
+    var sucker = document.getElementById("sucker");
+    /*
+    sucker.onload = function(){
+      sucker.contentWindow.postMessage("youku","http://localhost:8000");
+    }
+    */
+    window.addEventListener("message",function(e){
+        console.log(e.data + "from iframe");
+    },false);
+  </script>
+</body>
+</html>
