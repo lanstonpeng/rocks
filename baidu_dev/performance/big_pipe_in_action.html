@@ -150,12 +150,18 @@ pre code {
 <body>
 <h3>Big Pipe in Action</h3>
 
+<p>build:0.1.1 16:58 11.4 2013</p>
+
 <h4>TL;DR</h4>
 
-<p>就测量POI点，WiFi 下首屏显示<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup><br/>
-平均提升 <code>18%</code><br/>
-2G下波动较大(因为测试机的vps<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>在岛国，无cluster)<br/>
-平均提升超过<code>30%</code></p>
+<p>就测量POI点<br/>
+WiFi 下首屏显示<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup><br/>
+平均提升 <code>18%</code>
+预期提升 <code>20%</code></p>
+
+<p>2G下波动较大(因为测试机的vps<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>在岛国，无cluster)<br/>
+平均提升超过<code>30%</code>
+预期提升 <code>35%</code></p>
 
 <hr />
 
@@ -182,6 +188,12 @@ pre code {
 <li>对比二者时长，得出结论</li>
 </ul>
 </li>
+<li>噪点控制
+
+<ul>
+<li>感性均值</li>
+</ul>
+</li>
 </ul>
 
 
@@ -203,7 +215,7 @@ pre code {
 <li>With BigPipe
 
 <ul>
-<li>返回的第一批数据(~1k),页面立马展开渲染，同时保持连接，继续接收数据</li>
+<li>返回的第一批数据[ResponseBody] (~1k),页面立马展开渲染，同时保持连接，继续接收数据</li>
 </ul>
 </li>
 </ul>
@@ -211,14 +223,14 @@ pre code {
 <li><h5>Big Pipe 损耗了什么?</h5>
 
 <ul>
-<li>Server重构json性能损耗</li>
+<li>Server重构/序列化json性能损耗</li>
 <li>Client FE部分iframe性能损耗</li>
 </ul>
 </li>
 <li><h5>兼容性如何</h5>
 
 <ul>
-<li>Client基于H5的PostMessage，该接口在移动平台上支持完全<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></li>
+<li>Client基于H5的PostMessage，该接口在移动平台上支持较为完全<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></li>
 </ul>
 </li>
 <li><h6>为什么首屏是这样定义的?</h6>
@@ -638,6 +650,8 @@ pre code {
 </tbody>
 </table>
 
+
+<p>Powered by Markdown</p>
 <div class="footnotes">
 <hr/>
 <ol>
