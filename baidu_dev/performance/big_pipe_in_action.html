@@ -1,0 +1,654 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>Big Pipe in Action</title>
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<h3>Big Pipe in Action</h3>
+
+<h4>TL;DR</h4>
+
+<p>就测量POI点，WiFi 下首屏显示<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup><br/>
+平均提升 <code>18%</code><br/>
+2G下波动较大(因为测试机的vps<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>在岛国，无cluster)<br/>
+平均提升超过<code>30%</code></p>
+
+<hr />
+
+<h5>测试说明</h5>
+
+<ul>
+<li><p>环境</p>
+
+<ul>
+<li>Ubuntu,Node</li>
+<li>Android 2.3/2009 device</li>
+</ul>
+</li>
+<li><p>方法</p>
+
+<ul>
+<li>开发一中间层，做两件事情
+
+<ul>
+<li>分批flush数据(一个请求)</li>
+<li>透传phpui数据</li>
+</ul>
+</li>
+<li>对比二者时长，得出结论</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h4>FAQ</h4>
+
+<ul>
+<li><h6>Big Pipe提升了哪部分性能?</h6>
+
+<ul>
+<li>数据下载时长</li>
+<li>Normally
+
+<ul>
+<li>页面等待所有数据(~25k)返回后渲染模板</li>
+</ul>
+</li>
+<li>With BigPipe
+
+<ul>
+<li>返回的第一批数据(~1k),页面立马展开渲染，同时保持连接，继续接收数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h5>Big Pipe 损耗了什么?</h5>
+
+<ul>
+<li>Server重构json性能损耗</li>
+<li>Client FE部分iframe性能损耗</li>
+</ul>
+</li>
+<li><h5>兼容性如何</h5>
+
+<ul>
+<li>Client基于H5的PostMessage，该接口在移动平台上支持完全<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></li>
+</ul>
+</li>
+<li><h6>为什么首屏是这样定义的?</h6>
+
+<ul>
+<li>因为不同行业变化巨大，首屏共通点基本仅有这些，后续可以加入其它字段，但需要保持首批数据量尽量少</li>
+</ul>
+</li>
+<li><h6>首批数据量有多大?</h6>
+
+<ul>
+<li>Response Body 部分不超过1k</li>
+</ul>
+</li>
+<li><h6>成本是什么?</h6>
+
+<ul>
+<li>Server部分需要重新构建返回的json结构，因为没有接触过phpui的代码，故无法得出具体结论</li>
+<li>FE需要重新构建数据绑定逻辑，基于现有的place代码，修改成本比较大，capability需要重新构建</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h5>Raw Data( wifi,android 2.3, ~2009 device)</h5>
+
+<table>
+<thead>
+<tr>
+<th align="left">方式</th>
+<th align="left">电影               </th>
+<th align="left"> 说明 /收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=1203          </td>
+<td align="left"> 第一次数据返回时间(ms)</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">filltemplate=1215  </td>
+<td align="left"> 第二次数据返回</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">filltemplate=1576  </td>
+<td align="left"> 第二次数据返回</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">filltemplate=1794  </td>
+<td align="left">第三次数据返回</td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1152  </td>
+<td align="left">  全量请求时长</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">      </td>
+<td align="left"><code>-4%</code></td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=859</td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">filltemplate=867 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">filltemplate=1220 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">filltemplate=1405 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1115 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><code>+23%</code></td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=896</td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=913 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1200 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> req_end=1085 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">  </td>
+<td align="left"> <code>+17%</code></td>
+</tr>
+</tbody>
+</table>
+
+
+<table>
+<thead>
+<tr>
+<th align="left">方式</th>
+<th align="left">西餐               </th>
+<th align="left"> 说明/收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=906 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=912 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1096 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1401 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1366 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">  </td>
+<td align="left"> <code>+34%</code> </td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=1337 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1343 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1568 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1571 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">  </td>
+<td align="left"><code>+15%</code></td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=972 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=992 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1154 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1277 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1347 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">  </td>
+<td align="left"> <code>+26%</code> </td>
+</tr>
+</tbody>
+</table>
+
+
+<table>
+<thead>
+<tr>
+<th align="left">方式</th>
+<th align="left">商场</th>
+<th align="left">说明/收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=883 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1037 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1321 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1477 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1310 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">  </td>
+<td align="left"> <code>+33%</code> </td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=1055 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1111 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1558 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1653 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1229 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> </td>
+<td align="left"> <code>+14%</code> </td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=787 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=988 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1161 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left"> req_end=952</td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> </td>
+<td align="left"> <code>+17%</code></td>
+</tr>
+</tbody>
+</table>
+
+
+<table>
+<thead>
+<tr>
+<th align="left">方式</th>
+<th align="left">美食</th>
+<th align="left">说明/收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=1429 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1446 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1566 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1652 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1386 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> </td>
+<td align="left"> <code>-3%</code> </td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=1075 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1380 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1439 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1299 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> </td>
+<td align="left"> <code>+17%</code> </td>
+</tr>
+<tr>
+<td align="left">bigpipe</td>
+<td align="left">jet=1084 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1093 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1209 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"> filltemplate=1251 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left">normal</td>
+<td align="left">req_end=1255 </td>
+<td></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">  </td>
+<td align="left"> <code>+14%</code></td>
+</tr>
+</tbody>
+</table>
+
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p><img src="http://i.imgur.com/e9VGYRE.png?1" alt="img" /> 我们定义首屏为红框部分<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+<li id="fn:2">
+<p>88RMB一个月，欢迎合租  <a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
+<li id="fn:3">
+<p><a href="http://caniuse.com/x-doc-messaging">Can I use?</a><a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+</body>
+</html>

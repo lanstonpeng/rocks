@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+
+  <script type="text/javascript">
+  
+    var xhr = new XMLHttpRequest(),
+        url = "http://localhost:3600/?t=1382591240628&qt=ninf&from=webview&uid=7aea43b7204d94e17c29bd34&os=map_mac_app";
+xhr.open("GET",url);
+xhr.onreadystatechange = function(e){
+
+  if(xhr.readyState == 3) {
+    console.log("readyState response length: "+xhr.response.length)
+  }
+}
+xhr.onprogress = function(e){
+  //console.log(xhr.response.length)
+}
+xhr.send();
+  </script>
+</body>
+</html>

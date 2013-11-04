@@ -30,10 +30,12 @@ function Defer(){
       result;
   return {
       resolve:function(val){
+        if(!isResolved){
          result = val;
          queue.forEach(function(item,idx){
             item(val);
          });
+        }
          isResolved = true;
       },
       promise:{
