@@ -1,0 +1,587 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>To Ask</title>
+
+</head>
+<body>
+<h4>To Ask</h4>
+
+<ul>
+<li>When will Component Platform entirely(or say mostly) replace <em>Place</em> ?</li>
+</ul>
+
+
+<h2>性能技术规划</h2>
+
+<h3>文档目的</h3>
+
+<ul>
+<li>定位WebView性能问题(首次加载时长问题，本地模板调起成功率，页面渲染成功率等)</li>
+<li>分析WebView性能问题</li>
+<li>提出WebView性能优化解决方案</li>
+</ul>
+
+
+<hr />
+
+<h3><strong>结论(TL;DR)</strong></h3>
+
+<ul>
+<li>页面加载时间中数据拉取占用超过85%(所以，关注的重点应该是数据传输优化方面)</li>
+<li>用户交互优化收益较大，性价比相对较高</li>
+</ul>
+
+
+<hr />
+
+<h3>重要性能指标相关</h3>
+
+<ul>
+<li><p>webview重要性能指标：</p>
+
+<ul>
+<li>首次加载时长
+
+<ul>
+<li>反应打开手机地图查看POI详情的用户体验</li>
+<li>Including
+
+<ul>
+<li>首屏时间</li>
+<li>模板开始加载</li>
+<li>native调用setplaceInfo</li>
+<li>空模板完成</li>
+<li>数据发送</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>加载成功率
+
+<ul>
+<li>反应用户从列表页或图区页进入POI详情页看到详情信息的占比；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>性能指标衡量标准</p>
+
+<ul>
+<li>首次加载时长
+
+<ul>
+<li>用户从列表页或图区页点击“详情”进入POI详情页，到详情信息展示完毕；</li>
+</ul>
+</li>
+<li>加载成功率
+
+<ul>
+<li>用户从列表页或图区页点击“详情”进入POI详情页，是否能完全显示详情信息；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>性能指标结果监控</p>
+
+<ul>
+<li><a href="http://webspeed.baidu.com/pms_v2/web.php?product=17&amp;page=1&amp;stime=2013-12-11&amp;etime=2013-12-25&amp;v=v3">Webspeed监控平台</a></li>
+<li>webspeed统计页面加载时长示例
+<img src="http://i.imgur.com/WN9OF8i.png" alt="speed" />
+
+<h3>性能指标现状</h3></li>
+</ul>
+</li>
+<li><p>无缓存首次加载页面渲染完成时长(因统计源问题，目前只能得出综合机型时长)</p></li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th align="left">Network Type </th>
+<th align="center"> Time Spend </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">2G         </td>
+<td align="center"> 3680ms        </td>
+</tr>
+<tr>
+<td align="left">3G         </td>
+<td align="center"> 1970ms        </td>
+</tr>
+<tr>
+<td align="left">WIFI         </td>
+<td align="center"> 1761ms        </td>
+</tr>
+<tr>
+<td align="left">Avg.         </td>
+<td align="center"> 2430ms </td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>加载成功率(check it <a href="http://webspeed.baidu.com/pms_v2/native.php?product=map&amp;app=map|1|6.3.0&amp;stime=2013-12-04&amp;etime=2013-12-10&amp;cate=100&amp;token=&amp;v=v2">here</a>)
+
+<ul>
+<li>~98%</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h3>KPI目标(*机型平台待确认...)</h3>
+
+<p>在Q4完成时，KPI目标</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Type </th>
+<th align="center"> Target </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Webview详情页加载时间         </td>
+<td align="center"> 3s   </td>
+</tr>
+<tr>
+<td align="left">Webview详情页加载成功率         </td>
+<td align="center"> 10s 95%， 60s 98%        </td>
+</tr>
+</tbody>
+</table>
+
+
+<hr />
+
+<h3>技术分解Overview</h3>
+
+<h4>提高页面加载时间(基线)</h4>
+
+<ul>
+<li>提高 Native 加载 WebView 及其资源时间
+
+<ul>
+<li> Native通过其代码以及策略的优化
+
+<h4>页面数据加载时间</h4>
+
+<h4>页面渲染时间</h4></li>
+</ul>
+</li>
+<li>提升首屏出现时长</li>
+<li>按需加载</li>
+<li>渐进加载
+
+<h4>加载模板成功率</h4></li>
+<li>精准统计指标，使其更准确反应实际运行情况</li>
+<li>精准现有成功率统计方式</li>
+<li>统计指标分析，从采集的数据反应中获取优化方向及基准
+
+<h4>内存占用情况</h4>
+
+<ul>
+<li>(* do we really need it currently)</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h3>工作思路</h3>
+
+<ul>
+<li>Slogan
+
+<ul>
+<li>If you can't measure it ,you can't improve it -- Peter Drucker</li>
+</ul>
+</li>
+<li>统一衡量标准</li>
+<li>优化现有的衡量指标</li>
+<li>Workflow
+
+<ul>
+<li>提出方案</li>
+<li>评价&amp; demo</li>
+<li>通过数据保报表衡量研究收益</li>
+<li>迭代优化，<strong>形成阶段优化文档</strong></li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h3>各子方向技术分析及工作思路 Details</h3>
+
+<h4>提高页面加载时间(基线)</h4>
+
+<ul>
+<li>Native 加载 WebView 及其资源时间
+
+<ul>
+<li>方案
+
+<ul>
+<li>预先加载特定webview，该WebView包含所需资源(如javascript,css,images)，减少加载第一个POI点详情页信息时间(*可行性如何?)
+
+<h4>页面数据加载时间</h4></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>现况(以android6.20案例在三种网络情况下的情况)
+
+<ul>
+<li>时长占总长约为85%</li>
+</ul>
+</li>
+<li>方案
+
+<ul>
+<li>业界通用解决方案
+
+<ul>
+<li><strong>数据裁剪</strong>
+
+<ul>
+<li>问题
+
+<ul>
+<li>文档俱无，需要开发工具(*)</li>
+<li>历史原因，修改风险大</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>分段加载</li>
+<li>清除多余cookie</li>
+</ul>
+</li>
+<li>结合业务具体情况
+
+<ul>
+<li>Place跨机房的网络传输延迟问题
+
+<ul>
+<li><strong>离跨机房资源(如去哪儿)与快速获取资源数据接口(性价比较高)</strong></li>
+</ul>
+</li>
+<li>利用类似bigpipe的思想
+
+<ul>
+<li>一个HTTP Request 返回多条数据，增速首屏加载(*修改成本)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>缓存策略优化
+
+<ul>
+<li>根据行业已有数据接口细分
+
+<ul>
+<li>权衡成本以及收益</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>利用hybrid app的优势
+
+<ul>
+<li>利用native作为网络传输中间层(*利用pb，收益与成本如何?)</li>
+<li>webview部分可以裁剪客户端传入已有字段</li>
+</ul>
+</li>
+<li>社会学
+
+<ul>
+<li>记录用户行为</li>
+<li>分析行为</li>
+<li>根据行为模型预加载</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>页面渲染时间</h4>
+
+<ul>
+<li>现况
+
+<ul>
+<li>android 均值
+
+<ul>
+<li>~200 ms</li>
+</ul>
+</li>
+<li>ios 均值
+
+<ul>
+<li>~200ms</li>
+</ul>
+</li>
+<li>渲染占比约为10%，优化收益较少</li>
+<li>其它
+
+<ul>
+<li>用户交互迟缓
+
+<ul>
+<li>大部分的交互通过click事件handle,约有300ms延迟</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案
+
+<ul>
+<li>业界前端优化方案
+
+<ul>
+<li>减少reflow/repaint</li>
+</ul>
+</li>
+<li>结合业务分析得出的方案(如bigpipe等)</li>
+<li><strong>替换click为touchend事件(性价比非常高)</strong></li>
+</ul>
+</li>
+</ul>
+
+
+<h4>加载成功率</h4>
+
+<ul>
+<li>方案
+
+<ul>
+<li>优化捕获错误方式</li>
+<li>增加fallback方式
+
+<ul>
+<li>Reload Automatically</li>
+<li>Prompt the user with some info
+
+<h4>内存占用</h4></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>pending
+
+<ul>
+<li>I think we don't need to focus on this section at the current situation
+
+<h4>编码规范</h4>
+
+<h4>建立速度准入机制，放置性能退化上线</h4></li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h3>规划周期</h3>
+
+<ul>
+<li>12.16 -- 12.20
+
+<ul>
+<li>成功率统计优化</li>
+<li>优化交互</li>
+</ul>
+</li>
+<li>12.24 -- 12.28
+
+<ul>
+<li>行业数据拆分/裁剪</li>
+</ul>
+</li>
+<li>12.31 -- 1.3
+
+<ul>
+<li>数据分段加载
+
+<h3>收益分析</h3></li>
+</ul>
+</li>
+<li>预期收益
+
+<ul>
+<li>成功率
+
+<ul>
+<li>平均 99%</li>
+</ul>
+</li>
+<li>首屏加载时长
+
+<ul>
+<li>2G下 3s 内</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</body>
+</html>
