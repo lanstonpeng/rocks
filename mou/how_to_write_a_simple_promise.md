@@ -85,6 +85,7 @@ if a promise is already resolved,while adding a callback function which should b
 
 a promise can only be resolve once
 	
+
 ####let's make these to be chainable  
 - we accomplish this by return a **promise** after each calling of then
 - depending on different kinds of parameters(a promise or a callback function)

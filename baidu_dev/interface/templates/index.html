@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Protocal</title>
+  <link rel="stylesheet" href="static/main.css" />
+</head>
+<body>
+  <p>购物节Landing页面跳转Native协议商定</p>
+  <p>点击编辑，即可调试，完成后Save即可</p>
+  <ul>
+    <li >
+      <a href="{{groupon}}">团购列表项跳转</a>
+      <div class="groupon" contenteditable>
+        {{groupon}}
+      </div>
+    </li>
+    <li >
+      <a href="{{groupon_more}}">查看更多团购</a>
+      <div class="groupon_more" contenteditable>
+        {{groupon_more}}
+      </div>
+    </li>
+    <li >
+      <a href="{{movie}}">电影列表项跳转</a>
+      <div class="movie" contenteditable>
+        {{movie}}
+      </div>
+    </li>
+    <li >
+      <a href="{{movie_more}}">查看更多电影</a>
+      <div class="movie_more" contenteditable>
+        {{movie_more}}
+      </div>
+    </li>
+    <li >
+      <a href="{{food}}">查看美食项</a>
+      <div class="food" contenteditable>
+        {{food}}
+      </div>
+    </li>
+    <li >
+      <a href="{{food_more}}">查看更多美食</a>
+      <div class="food_more" contenteditable>
+        {{food_more}}
+      </div>
+    </li>
+
+    <li >
+      <a href="{{hotel}}">查看酒店项</a>
+      <div class="hotel" contenteditable>
+        {{hotel}}
+      </div>
+    </li>
+    <li >
+      <a href="{{hotel_more}}">查看更多酒店</a>
+      <div class="hotel_more" contenteditable>
+        {{hotel_more}}
+      </div>
+    </li>
+    <li >
+      <a href="{{taxi}}">查看打车</a>
+      <div class="taxi" contenteditable>
+        {{taxi}}
+      </div>
+    </li>
+  </ul>
+  <div class="wrapper">
+    <div id="save" class="">
+        SAVE
+    </div>
+  </div>
+  <script type="text/javascript">
+    var HOST = "http://localhost:5000/saveass?";
+    function $(str){
+      return document.querySelector(str);
+    }
+    function $$(str){
+      return document.querySelectorAll(str);
+    }
+    function getContnet(ele){
+      return encodeURIComponent(ele.innerText);
+    }
+    var save = $("#save"),
+        list = [
+         $(".groupon"),
+         $(".groupon_more"),
+         $(".movie"),
+         $(".movie_more"),
+         $(".food"),
+         $(".food_more"),
+         $(".hotel"),
+        $(".hotel_more"),
+        $(".taxi")
+        ];
+    
+var edit = [].slice.call($$("ul div[class]"),0);
+  edit.forEach(function(item,idx){
+    item.onblur = function(e){
+      var link = e.target.parentElement.querySelector("a");
+      link.href = e.target.innerText;
+    } 
+  });
+
+    save.addEventListener("click",function(e){
+        var result = [HOST];
+           list.forEach(function(item,idx){
+               result.push(item.className);
+               result.push("=");
+               result.push( getContnet(item) );
+               result.push( "&" );
+             });
+           result.pop();
+       (new Image()).src =result.join("");
+    });
+  </script>
+</body>
+</html>

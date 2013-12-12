@@ -26,7 +26,7 @@ var server = http.createServer(function(req,res){
       return;
     }
     else{
-      var pre_html =' <!DOCTYPE HTML> <html lang="en"> <head> <meta charset="UTF-8"> <title></title> </head> <body> <script type="text/javascript"> var Pipe = (function(window){ var ORIGIN_ALLOW = "*"; function _wrapCallback(json_raw,callback){ var callback = callback || "fillTemplate"; var code = ["window.", callback, "(", json_raw, ")" ]; return code.join(""); } function _sendMessage(json,callback){ var parent = window.parent, data = JSON.stringify(json); debugger; data = _wrapCallback(data,callback); console.log("send from iframe " + data); parent.postMessage(data,ORIGIN_ALLOW); } return { sendMessage : _sendMessage } })(window); </script> ';
+      var pre_html =' <!DOCTYPE HTML> <html lang="en"> <head> <meta charset="UTF-8"> <title></title> </head> <body> <script type="text/javascript"> var Pipe = (function(window){ var ORIGIN_ALLOW = "*"; function _wrapCallback(json_raw,callback){ var callback = callback || "fillTemplate"; var code = ["window.", callback, "(", json_raw, ")" ]; return code.join(""); } function _sendMessage(json,callback){ var parent = window.parent, data = JSON.stringify(json); data = _wrapCallback(data,callback); parent.postMessage(data,ORIGIN_ALLOW); } return { sendMessage : _sendMessage } })(window); </script> </body> </html> ';
 
       res.write(pre_html);
 
@@ -39,7 +39,7 @@ var server = http.createServer(function(req,res){
             //res.write(chunk);
         });
         response.on("end",function(){
-          json_raw= cutCallback(json_raw,req_para.query["callback"]);
+          //json_raw= cutCallback(json_raw,req_para.query["callback"]);
           json_data = JSON.parse(json_raw);
           /*
           jsonFormater.flushDetailInfo(json_data,res);

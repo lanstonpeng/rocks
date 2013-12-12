@@ -3,6 +3,7 @@ var afterNSec = function(n){
   var deferred = new Defer();
 
   setTimeout(function(){
+     debugger;
      deferred.resolve("youku"+n); 
   },n);
   return deferred.promise;
@@ -17,12 +18,14 @@ a.then(b)
 .then(function(value){
   console.log("first "+ value);
   return value + " from first";
-})
+});
+/*
 .then(
   function(value){
     console.log("second " + value);
   }
 );
+*/
 
 function Defer(){
   var queue = [],
@@ -40,6 +43,7 @@ function Defer(){
       },
       promise:{
           then : function(func){
+            debugger;
             var defer = new Defer();
 
             var callback = function(value){

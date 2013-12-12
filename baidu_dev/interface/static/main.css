@@ -1,0 +1,27 @@
+ul{
+    list-style:none;
+}
+ul div{
+    background:rgba(0,0,0,0.2);
+    padding:15px;
+}
+li{
+    margin:10px;
+}
+ul div:focus{
+    border:0px;
+    outline:none;
+}
+p {
+    text-align:right;
+}
+.wrapper{
+    text-align:center;
+}
+#save{
+    width:30%;
+    height:100px;
+    display:inline-block;
+    background:orange;
+    line-height:100px;
+}

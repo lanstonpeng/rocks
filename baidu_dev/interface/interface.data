@@ -1,0 +1,9 @@
+{groupon}:bdapi://test?gid=what&city=whatsss
+{groupon_more}:bdapi://test?gid=what&city=what
+{movie}:bdap://test?cityid=what
+{movie_more}:bdap://test?cityid=what
+{food}:bdap://test?cityid=what
+{food_more}:bdap://test?cityid=what
+{hotel}:bdap://test?cityid=what
+{hotel_more}:bdap://test?cityid=what
+{taxi}:bdap://test?cityid=whatasdf

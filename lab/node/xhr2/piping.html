@@ -24,7 +24,6 @@
         var parent = window.parent,
             data = JSON.stringify(json);
         data = _wrapCallback(data,callback);
-        console.log("send from iframe " + data);
         parent.postMessage(data,ORIGIN_ALLOW);
     }
     return {
