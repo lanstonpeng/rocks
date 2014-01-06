@@ -42,7 +42,6 @@ module.exports = function(grunt) {
           middleware:function(connect){
             return [
               lrSnippet,
-              mountFolder(connect,".tmp"),
               mountFolder(connect,"./")
             ];
           }
@@ -66,10 +65,6 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('default', ['connect:livereload','watch:livereload']);
-  /*
-  grunt.registerTask('server',function(target){
-    grunt.task.run(["connect:livereload","open","watch"]);
-  });
-  */
+  //grunt.registerTask('default', ['watch:livereload','connect:livereload']);
 
 };
