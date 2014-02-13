@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <script type="text/javascript">
+   var HOST = "127.0.0.1";
+   var PORT = "8081";
+   var socket = window.socket = new WebSocket('ws://' + HOST + ':' + PORT); 
+   socket.onopen=function(e){
+     setTimeout(function(){
+         
+     socket.send("MDN");
+     socket.close();
+         },500);
+   };
+  socket.onmessage=function(e){
+    console.log(e);
+  };
+  socket.onclose = function(e){
+    console.log("closing");
+  }
+
+  </script>
+</body>
+</html>

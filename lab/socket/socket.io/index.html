@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style type="text/css">
+    #test{
+      height:900px;
+      width:500px;
+      background:grey;
+      opacity:0.5
+    }  
+  </style>
+</head>
+<script type="text/html"  id="template">
+      <div id="<%=id%>" class="<%=(i % 2 == 1 ? "even" :"")%>">
+          <div class="grid_1 alpha right">
+                <img class="righted" src="<%=profile_image_url%>"/>
+          </div>
+          <div class="grid_6 omega contents">
+            <p><b><a href="/<%=from_user%>"><%=from_user%></a>:</b> <%=text%></p>
+          </div>
+      </div>
+</script>
+<script type="text/html" id="user_tmpl">
+      <div id="<%=id%>" class="<%=(i % 2 == 1 ? "even" :"")%>">
+          <div class="grid_1 alpha right">
+                <img class="righted" src="<%=profile_image_url%>"/>
+          </div>
+          <div class="grid_6 omega contents">
+          <% var a=2; if(<%=text%> == "daddy" || <%=text%> == "youku"){ %>
+                <p><b><a href="/<%=from_user%>"><%=from_user%></a>:</b> <%=text%></p>
+            <% } %>
+          </div>
+          <ul>
+            <% for ( var i = 0; i < users.length; i++ ) { %>
+                <li><a href="<%=users[i].url%>"><%=users[i].name%></a></li>
+            <% } %>
+          </ul>
+      </div>
+</script>
+<body>
+  <div id="chat">
+      <div id="room"></div>
+      <div id="input">
+          <input type="text" />
+      </div>
+  </div>
+  <script type="text/javascript" data-main="src/Template.js" src="/src/bower_components/requirejs/require.js"></script>
+  </script>
+  <script type="text/javascript">
+  </script>
+</body>
+</html>
